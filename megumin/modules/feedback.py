@@ -14,15 +14,15 @@ def feedback(bot: Bot, update: Update):
   message = update.effective_message
   userid=message.from_user.id
   text = message.text[len('/feedback '):]
-   
+
 
   feed_text = f"Megumin's *New* feedback from [{name}](tg://user?id={userid})\n\nfeed: {text}"
-  
+
 
   bot.send_message(-1001440536306, feed_text, parse_mode=ParseMode.MARKDOWN)
- 
+
   text = html.escape(text)
-  reply_text=f"Thankyou for giving us your feedback."
+  reply_text = "Thankyou for giving us your feedback."
   message.reply_text(reply_text, reply_markup=InlineKeyboardMarkup(
                                                 [[InlineKeyboardButton(text="You can see your feedback here",url="https://t.me/Smart_S54")]]))
                                                

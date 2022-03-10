@@ -40,9 +40,7 @@ def gkick(bot: Bot, update: Update, args: List[str]):
     try:
         user_chat = bot.get_chat(user_id)
     except BadRequest as excp:
-        if excp.message in GKICK_ERRORS:
-            pass
-        else:
+        if excp.message not in GKICK_ERRORS:
             message.reply_text("User cannot be Globally kicked because: {}".format(excp.message))
             return
     except TelegramError:
@@ -57,7 +55,7 @@ def gkick(bot: Bot, update: Update, args: List[str]):
     if int(user_id) == OWNER_ID:
         message.reply_text("Wow! Someone's so noob that he want to gkick my owner! *Grabs Potato Chips*")
         return
-        
+
     if user_id == bot.id:
         message.reply_text("Welp, I'm not gonna to gkick myself!")
         return    
@@ -86,7 +84,7 @@ def gkick(bot: Bot, update: Update, args: List[str]):
 
     else:
         send_to_list(bot, SUDO_USERS + DEV_USERS, log_message, html=True)
-	
+
     message.reply_text("Globally kicking user {}".format(user_chat.first_name))
     sql.gkick_user(user_id, user_chat.username, 1)
     for chat in chats:
@@ -98,9 +96,7 @@ def gkick(bot: Bot, update: Update, args: List[str]):
             else:
                 bot.unban_chat_member(chat.chat_id, user_id)
         except BadRequest as excp:
-            if excp.message in GKICK_ERRORS:
-                pass
-            else:
+            if excp.message not in GKICK_ERRORS:
                 message.reply_text("User cannot be Globally kicked because: {}".format(excp.message))
                 return
         except TelegramError:
@@ -108,16 +104,15 @@ def gkick(bot: Bot, update: Update, args: List[str]):
 
 def __user_info__(user_id):
     times = sql.get_times(user_id)
-    
+
     if int(user_id) in SUDO_USERS or int(user_id) in SUPPORT_USERS:
-        text="Globally kicked: <b>No</b> (Immortal)"
-    else:
-        text = "Globally kicked: {}"
-        if times!=0:
-            text = text.format("<b>Yes</b> (Times: {})".format(times))
-        else:
-            text = text.format("<b>No</b>")
-    return text
+        return "Globally kicked: <b>No</b> (Immortal)"
+    text = "Globally kicked: {}"
+    return (
+        text.format("<b>Yes</b> (Times: {})".format(times))
+        if times != 0
+        else text.format("<b>No</b>")
+    )
 
 @run_async
 def gkickset(bot: Bot, update: Update, args: List[str]):
@@ -126,15 +121,13 @@ def gkickset(bot: Bot, update: Update, args: List[str]):
     try:
         user_chat = bot.get_chat(user_id)
     except BadRequest as excp:
-        if excp.message in GKICK_ERRORS:
-            pass
-        else:
+        if excp.message not in GKICK_ERRORS:
             message.reply_text("GENERIC ERROR: {}".format(excp.message))
     except TelegramError:
         pass
     if not user_id:
         message.reply_text("You do not seems to be referring to a user")
-        return  
+        return
     if int(user_id) in SUDO_USERS or int(user_id) in SUPPORT_USERS:
         message.reply_text("SUDOER: Irrelevant")
         return
@@ -144,7 +137,7 @@ def gkickset(bot: Bot, update: Update, args: List[str]):
     if user_id == bot.id:
         message.reply_text("It's me, nigga")
         return
-      
+
     sql.gkick_setvalue(user_id, user_chat.username, int(value))
     return
 
@@ -154,15 +147,13 @@ def gkickreset(bot: Bot, update: Update, args: List[str]):
     try:
         user_chat = bot.get_chat(user_id)
     except BadRequest as excp:
-        if excp.message in GKICK_ERRORS:
-            pass
-        else:
+        if excp.message not in GKICK_ERRORS:
             message.reply_text("GENERIC ERROR: {}".format(excp.message))
     except TelegramError:
         pass
     if not user_id:
         message.reply_text("You do not seems to be referring to a user")
-        return  
+        return
     if int(user_id) in SUDO_USERS or int(user_id) in SUPPORT_USERS:
         message.reply_text("SUDOER: Irrelevant")
         return
@@ -172,7 +163,7 @@ def gkickreset(bot: Bot, update: Update, args: List[str]):
     if user_id == bot.id:
         message.reply_text("It's me, nigga")
         return
-      
+
     sql.gkick_reset(user_id)
     return
 
